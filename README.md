@@ -30,3 +30,6 @@ lbenson is a basic camera app and therefore does not have any additional feature
 
 - React Native
 - Expo
+
+![image](https://user-images.githubusercontent.com/105423307/214206615-9a16ea14-de78-47d1-b944-d97158208be8.png)
+
