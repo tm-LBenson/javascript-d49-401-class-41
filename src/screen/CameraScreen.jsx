@@ -44,31 +44,43 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <Camera
-        style={styles.cameraView}
-        type={type}
-        ref={cameraRef}
-      >
-        <View style={styles.captureContainer}>
-          <TouchableOpacity onPress={takePicture}>
-            <Text style={styles.captureButtonText}></Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={toggleCameraType}
-            style={styles.flipCamera}
-          >
-            <Image
-              style={{ width: 28, height: 28 }}
-              source={{
-                uri: 'https://cdn2.iconfinder.com/data/icons/social-productivity-line-art-1/128/camera-switch-512.png',
-              }}
-            />
-          </TouchableOpacity>
+      {imageUri === null ? (
+        <Camera
+          style={styles.cameraView}
+          type={type}
+          ref={cameraRef}
+        >
+          {console.log('render')}
+          <View style={styles.captureContainer}>
+            <TouchableOpacity onPress={takePicture}>
+              <Text style={styles.captureButtonText}></Text>
+            </TouchableOpacity>
+          </View>
 
+          <View>
+            <TouchableOpacity
+              onPress={toggleCameraType}
+              style={styles.flipCamera}
+            >
+              <Image
+                style={{ width: 28, height: 28 }}
+                source={{
+                  uri: 'https://cdn2.iconfinder.com/data/icons/social-productivity-line-art-1/128/camera-switch-512.png',
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      ) : (
+        <View>
+          <Image
+            style={{ width: 450, height: 750 }}
+            source={{
+              uri: imageUri,
+            }}
+          />
         </View>
-      </Camera>
+      )}
     </View>
   );
 }
@@ -109,7 +121,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   roundButton: {
-    
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -118,7 +129,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   flipCamera: {
-   
     width: 50,
     height: 50,
     borderRadius: 25,
