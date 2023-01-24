@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { Camera, requestCameraPermissionsAsync } from 'expo-camera';
 
 export default function CameraScreen() {
@@ -27,6 +27,14 @@ export default function CameraScreen() {
     }
   };
 
+  const toggleCameraType = () => {
+    setType(
+      type === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back,
+    );
+  };
+
   if (hasPermission === null) {
     return <View />;
   }
@@ -47,6 +55,17 @@ export default function CameraScreen() {
             onPress={takePicture}
           >
             <Text style={styles.captureButtonText}></Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={toggleCameraType}
+            style={styles.roundButton}
+          >
+            <Image
+              style={{ width: 28, height: 28 }}
+              source={{
+                uri: 'https://cdn2.iconfinder.com/data/icons/social-productivity-line-art-1/128/camera-switch-512.png',
+              }}
+            />
           </TouchableOpacity>
         </View>
       </Camera>
@@ -88,5 +107,17 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: 'silver',
     alignSelf: 'center',
+  },
+  roundButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'silver',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roundButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
