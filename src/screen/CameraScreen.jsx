@@ -50,15 +50,14 @@ export default function CameraScreen() {
         ref={cameraRef}
       >
         <View style={styles.captureContainer}>
-          <TouchableOpacity
-            style={styles.captureButton}
-            onPress={takePicture}
-          >
+          <TouchableOpacity onPress={takePicture}>
             <Text style={styles.captureButtonText}></Text>
           </TouchableOpacity>
+        </View>
+        <View>
           <TouchableOpacity
             onPress={toggleCameraType}
-            style={styles.roundButton}
+            style={styles.flipCamera}
           >
             <Image
               style={{ width: 28, height: 28 }}
@@ -67,6 +66,7 @@ export default function CameraScreen() {
               }}
             />
           </TouchableOpacity>
+
         </View>
       </Camera>
     </View>
@@ -109,6 +109,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   roundButton: {
+    
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'silver',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flipCamera: {
+   
     width: 50,
     height: 50,
     borderRadius: 25,
