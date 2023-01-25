@@ -1,49 +1,40 @@
 /** @format */
-
 import { StyleSheet } from 'react-native';
-
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  cameraView: {
-    flex: 1,
-    justifyContent: 'flex-end',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
-  captureContainer: {
-    flex: 0,
-    backgroundColor: 'transparent',
+  buttons: {
+    height: 20,
+    flex: 0.1,
     flexDirection: 'row',
-    alignSelf: 'center',
+    gap: 10,
+    padding: 20,
   },
-  capture: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'silver',
-    alignSelf: 'center',
-  },
-
-  captureButtonText: {
-    color: '#000',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    width: 75,
-    height: 75,
-    marginBottom: 40,
-    borderRadius: 50,
-    backgroundColor: 'silver',
-    alignSelf: 'center',
+  safeButton: {
+    margin: 40,
   },
   roundButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 75,
+    height: 75,
+    borderRadius: 100,
     backgroundColor: 'silver',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#333',
+    alignSelf: 'center',
+    borderRadius: 100,
+    justifyContent: 'flex-end',
+    marginBottom: 100,
+  },
+  preview: {
+    alignSelf: 'stretch',
+    flex: 1,
   },
   flipCamera: {
     width: 50,
@@ -52,9 +43,5 @@ export const styles = StyleSheet.create({
     backgroundColor: 'silver',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  roundButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
 });

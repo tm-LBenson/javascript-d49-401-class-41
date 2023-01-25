@@ -2,7 +2,6 @@
 
 import { StatusBar } from 'expo-status-bar';
 import {
-  StyleSheet,
   Text,
   View,
   SafeAreaView,
@@ -14,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
 import { shareAsync } from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
+import { styles } from './styles';
 
 export default function App() {
   let cameraRef = useRef();
@@ -51,7 +51,7 @@ export default function App() {
     let options = {
       quality: 1,
       base64: true,
-      exif: false,
+      exit: false,
     };
 
     let newPhoto = await cameraRef.current.takePictureAsync(options);
@@ -107,7 +107,6 @@ export default function App() {
       ref={cameraRef}
     >
       <View style={styles.buttonContainer}>
-        
         <TouchableOpacity
           style={styles.roundButton}
           title="Take Pic"
@@ -129,49 +128,3 @@ export default function App() {
     </Camera>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  buttons: {
-    height: 20,
-    flex: 0.1,
-    flexDirection: 'row',
-    gap: 10,
-    padding: 20,
-  },
-  safeButton: {
-    margin: 40,
-  },
-  roundButton: {
-    width: 75,
-    height: 75,
-    borderRadius: 100,
-    backgroundColor: 'silver',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#333',
-    alignSelf: 'center',
-    borderRadius: 100,
-    justifyContent: 'flex-end',
-    marginBottom: 100,
-  },
-  preview: {
-    alignSelf: 'stretch',
-    flex: 1,
-  },
-  flipCamera: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'silver',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
