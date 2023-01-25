@@ -43,5 +43,6 @@ lbenson is a basic camera app and therefore does not have any additional feature
 ## Screen shots of app in use
 ![Screenshot from 2023-01-24 22-21-05](https://user-images.githubusercontent.com/105423307/214473068-72ce71b4-9055-4dd1-a817-d4da7263d14c.png)
 ![Screenshot from 2023-01-24 22-20-22](https://user-images.githubusercontent.com/105423307/214473103-3cf94ad7-b0c0-4fcd-8816-b9c5dd18b431.png)
+![image](https://user-images.githubusercontent.com/105423307/214473728-6794ab91-d8e9-4494-9060-2e3bbb6bbdac.png)
 
 ![image](https://user-images.githubusercontent.com/105423307/214206615-9a16ea14-de78-47d1-b944-d97158208be8.png)
