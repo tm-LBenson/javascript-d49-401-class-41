@@ -2,7 +2,7 @@
 
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { WhiteBalance } from 'expo-camera';
+
 
 function HomeScreen({ navigation }) {
   return (

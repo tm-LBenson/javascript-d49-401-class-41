@@ -1,140 +1,177 @@
 /** @format */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
-import { Camera, requestCameraPermissionsAsync } from 'expo-camera';
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  Button,
+} from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Camera } from 'expo-camera';
+import { shareAsync } from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
 
-import { styles } from './styles';
-export default function CameraScreen() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [imageUri, setImageUri] = useState(null);
-  const cameraRef = useRef(null);
-
+export default function App() {
+  let cameraRef = useRef();
+  const [hasCameraPermission, setHasCameraPermission] = useState();
+  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
+  const [photo, setPhoto] = useState();
+  let [type, setType] = useState(Camera.Constants.Type.back);
   useEffect(() => {
     (async () => {
-      console.log(Platform);
-      if (Platform.OS === 'ios') {
-        const { status } = await requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Camera permission is required!');
-        }
-        setHasPermission(status === 'granted');
-      } else if (Platform.OS === 'android') {
-        const cameraPermission = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'This app needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        const storagePermission = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'Storage Permission',
-            message: 'This app needs access to your storage',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (
-          cameraPermission === PermissionsAndroid.RESULTS.GRANTED &&
-          storagePermission === PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          setHasPermission(true);
-        } else {
-          alert('Camera and storage permission is required!');
-        }
-      }
+      const cameraPermission = await Camera.requestCameraPermissionsAsync();
+      const mediaLibraryPermission =
+        await MediaLibrary.requestPermissionsAsync();
+      setHasCameraPermission(cameraPermission.status === 'granted');
+      setHasMediaLibraryPermission(mediaLibraryPermission.status === 'granted');
     })();
   }, []);
 
-  const takePicture = async () => {
-    try {
-      if (cameraRef.current) {
-        let photo = await cameraRef.current.takePictureAsync();
-        setImageUri(photo.uri);
-        if (Platform.OS === 'ios') {
-          const saveResult = await CameraRoll.save(photo.uri);
-          if (!saveResult) {
-            alert('Failed to save image to camera roll!');
-          } else if (saveResult instanceof Error) {
-            alert(saveResult.message);
-          }
-        } else if (Platform.OS === 'android') {
-          const saveResult = await CameraRoll.save(photo.uri);
-          if (!saveResult) {
-            alert('Failed to save image to camera roll!');
-          } else if (saveResult instanceof Error) {
-            alert(saveResult.message);
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      alert('An error occurred while taking the picture');
+  if (hasCameraPermission === undefined) {
+    return <Text>Requesting permissions...</Text>;
+  } else if (!hasCameraPermission) {
+    return (
+      <Text>
+        Permission for camera not granted. Please change this in settings.
+      </Text>
+    );
+  }
+  let flipCamera = () => {
+    if (type === Camera.Constants.Type.back) {
+      setType(Camera.Constants.Type.front);
+    } else {
+      setType(Camera.Constants.Type.back);
     }
   };
+  let takePic = async () => {
+    let options = {
+      quality: 1,
+      base64: true,
+      exif: false,
+    };
 
-  const toggleCameraType = () => {
-    setType(
-      type === Camera.Constants.Type.back
-        ? Camera.Constants.Type.front
-        : Camera.Constants.Type.back,
-    );
+    let newPhoto = await cameraRef.current.takePictureAsync(options);
+    setPhoto(newPhoto);
   };
 
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera roll</Text>;
+  if (photo) {
+    let sharePic = () => {
+      shareAsync(photo.uri).then(() => {
+        setPhoto(undefined);
+      });
+    };
+
+    let savePhoto = () => {
+      MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
+        setPhoto(undefined);
+      });
+    };
+
+    return (
+      <SafeAreaView style={styles.container}>
+        <Image
+          style={styles.preview}
+          source={{ uri: 'data:image/jpg;base64,' + photo.base64 }}
+        />
+        <View style={styles.buttons}>
+          <Button
+            style={styles.safeButton}
+            title="Share"
+            onPress={sharePic}
+          />
+          {hasMediaLibraryPermission ? (
+            <Button
+              style={styles.safeButton}
+              title="Save"
+              onPress={savePhoto}
+            />
+          ) : undefined}
+          <Button
+            style={styles.safeButton}
+            title="Discard"
+            onPress={() => setPhoto(undefined)}
+          />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (
-    <View style={styles.container}>
-      {imageUri === null ? (
-        <Camera
-          style={styles.cameraView}
-          type={type}
-          ref={cameraRef}
+    <Camera
+      type={type}
+      style={styles.container}
+      ref={cameraRef}
+    >
+      <View style={styles.buttonContainer}>
+        
+        <TouchableOpacity
+          style={styles.roundButton}
+          title="Take Pic"
+          onPress={takePic}
+        ></TouchableOpacity>
+        <TouchableOpacity
+          style={styles.flipCamera}
+          onPress={flipCamera}
         >
-          <View style={styles.captureContainer}>
-            <TouchableOpacity onPress={takePicture}>
-              <Text style={styles.captureButtonText}></Text>
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <TouchableOpacity
-              onPress={toggleCameraType}
-              style={styles.flipCamera}
-            >
-              <Image
-                style={{ width: 28, height: 28 }}
-                source={{
-                  uri: 'https://cdn2.iconfinder.com/data/icons/social-productivity-line-art-1/128/camera-switch-512.png',
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-        </Camera>
-      ) : (
-        <View>
           <Image
-            style={{ width: 450, height: 750 }}
+            style={{ width: 28, height: 28 }}
             source={{
-              uri: imageUri,
+              uri: 'https://cdn2.iconfinder.com/data/icons/social-productivity-line-art-1/128/camera-switch-512.png',
             }}
           />
-        </View>
-      )}
-    </View>
+        </TouchableOpacity>
+      </View>
+      <StatusBar style="auto" />
+    </Camera>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  buttons: {
+    height: 20,
+    flex: 0.1,
+    flexDirection: 'row',
+    gap: 10,
+    padding: 20,
+  },
+  safeButton: {
+    margin: 40,
+  },
+  roundButton: {
+    width: 75,
+    height: 75,
+    borderRadius: 100,
+    backgroundColor: 'silver',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#333',
+    alignSelf: 'center',
+    borderRadius: 100,
+    justifyContent: 'flex-end',
+    marginBottom: 100,
+  },
+  preview: {
+    alignSelf: 'stretch',
+    flex: 1,
+  },
+  flipCamera: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'silver',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
